@@ -6,13 +6,19 @@ import { GlobalStyle } from 'styles/global';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ModeProvider } from 'context/modeContext';
+import { AuthProvider } from 'context/authContext';
+import { AxiosInterceptor } from 'api/client';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <GlobalStyle />
-    <ModeProvider>
-      <RouterProvider router={router} />
-    </ModeProvider>
+    <AuthProvider>
+      <AxiosInterceptor>
+        <ModeProvider>
+          <RouterProvider router={router} />
+        </ModeProvider>
+      </AxiosInterceptor>
+    </AuthProvider>
     <ToastContainer />
   </React.StrictMode>
 );

@@ -13,10 +13,12 @@ export const Layout = ({ noBackButton }: Props) => {
   const navigate = useNavigate();
   const { isPreparationMode } = useModeContext();
 
+  const pathsWithoutBackButton = [ROUTES.Search, ROUTES.Register, ROUTES.Login];
+
   return (
     <>
       <Container maxWidth='sm'>
-        {pathname !== ROUTES.Search && (
+        {!pathsWithoutBackButton.includes(pathname as ROUTES) && (
           <BackButtonLink
             variant={isPreparationMode ? 'text' : 'outlined'}
             startIcon={<ArrowBackIcon />}
