@@ -4,7 +4,7 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
-import { getTrack, matchTracks, search } from 'api';
+import { getMatchingTracks, getTrack, matchTracks, search } from 'api';
 import { CompletionsTextField } from 'components/CompletionsTextField';
 import { CompletionsListLink } from 'components/CompletionsTextField/CompletionsTextField.styled';
 import { useCallback, useEffect, useState } from 'react';
@@ -23,6 +23,7 @@ export const AddMatchingTrack = () => {
   const [inputCompletions, setInputCompletions] = useState<Track[]>([]);
   const [track1, setTrack1] = useState<Track | undefined>();
   const [track2, setTrack2] = useState<Track | undefined>();
+  const [matchingTracks, setMatchingTracks] = useState<Track[]>([]);
   const [trackApiCallSuccess, setTrackApiCallSuccess] = useState(false);
   const [errors, setErrors] = useState({ track: false });
   const [loading, setLoading] = useState(false);
@@ -74,7 +75,16 @@ export const AddMatchingTrack = () => {
         setTrack1(originTrack);
       }
     };
+
+    const fetchMatchingTracks = async () => {
+      if (originTrackId) {
+        const result = await getMatchingTracks(Number(originTrackId));
+        setMatchingTracks(result);
+      }
+    };
+
     fetchOriginTrack();
+    fetchMatchingTracks();
   }, [originTrackId]);
 
   useEffect(() => {
@@ -126,7 +136,10 @@ export const AddMatchingTrack = () => {
             // TODO: instead of filtering, render already matched tracks at the bottom
             //       of the list, mark them somehow (green tick?) and make unclickable
             .filter(
-              (completion) => !track1?.matching_tracks.includes(completion.id)
+              (completion) =>
+                !matchingTracks
+                  .map((matchingTrack) => matchingTrack.id)
+                  .includes(completion.id)
             )}
           completionsListElementRenderer={(completion) => (
             <ListItemButton
