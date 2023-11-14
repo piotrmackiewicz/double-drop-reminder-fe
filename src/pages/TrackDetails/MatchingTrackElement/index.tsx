@@ -22,7 +22,6 @@ export const MatchingTrackElement = ({ track }: Props) => {
         <MatchingTrackLink
           to={ROUTES.TrackDetails.replace(':id', id.toString())}
           state={{ track }}
-          replace
         >
           <ListItemText primary={title} secondary={artist} />
         </MatchingTrackLink>
@@ -35,7 +34,6 @@ export const MatchingTrackElement = ({ track }: Props) => {
       <MatchingTrackLink
         to={ROUTES.TrackDetails.replace(':id', id.toString())}
         state={{ track }}
-        replace
       >
         <PreparationModeListItemText primary={title} secondary={artist} />
       </MatchingTrackLink>

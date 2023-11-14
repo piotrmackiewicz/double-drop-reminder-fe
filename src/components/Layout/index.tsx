@@ -8,6 +8,8 @@ interface Props {
   noBackButton?: boolean;
 }
 
+// TODO: make "Back to Search" button
+
 export const Layout = ({ noBackButton }: Props) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
