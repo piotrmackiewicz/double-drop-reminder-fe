@@ -1,4 +1,5 @@
 import {
+  CircularProgress,
   FormControl,
   FormHelperText,
   IconButton,
@@ -20,6 +21,7 @@ interface Props<T extends GenericTypeConstraint> extends OutlinedInputProps {
   onClear?: () => void;
   completions?: T[];
   helperText?: string;
+  loading?: boolean;
   completionsListElementRenderer: (element: T) => React.ReactNode;
   showNoCompletionsHint?: boolean;
   noCompletionsHintRenderer?: () => React.ReactNode;
@@ -29,6 +31,7 @@ export const CompletionsTextField = <T extends GenericTypeConstraint>({
   onClear,
   completions = [],
   helperText,
+  loading,
   completionsListElementRenderer,
   showNoCompletionsHint,
   noCompletionsHintRenderer,
@@ -59,12 +62,18 @@ export const CompletionsTextField = <T extends GenericTypeConstraint>({
           autoFocus={autoFocus}
           placeholder={placeholder}
           endAdornment={
-            onClear && (
+            loading ? (
               <InputAdornment position='end'>
-                <IconButton onClick={onClear} edge='end'>
-                  {!!value && value.length > 0 && <ClearIcon />}
-                </IconButton>
+                <CircularProgress size={24} />
               </InputAdornment>
+            ) : (
+              onClear && (
+                <InputAdornment position='end'>
+                  <IconButton onClick={onClear} edge='end'>
+                    {!!value && value.length > 0 && <ClearIcon />}
+                  </IconButton>
+                </InputAdornment>
+              )
             )
           }
         />

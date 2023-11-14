@@ -12,6 +12,7 @@ import { useModeContext } from 'context/modeContext';
 export const Search = () => {
   const [searchValue, setSearchValue] = useState('');
   const [completions, setCompletions] = useState<Track[]>([]);
+  const [loading, setLoading] = useState(false);
   const [apiCallSuccess, setApiCallSuccess] = useState(false);
   const { isPreparationMode } = useModeContext();
 
@@ -22,12 +23,15 @@ export const Search = () => {
 
   const searchHandler = useCallback(async () => {
     setApiCallSuccess(false);
+    setLoading(true);
     try {
       const result = await search(searchValue);
       setApiCallSuccess(true);
       setCompletions(result.data);
     } catch (err) {
       // TODO: error handling
+    } finally {
+      setLoading(false);
     }
   }, [searchValue]);
 
@@ -51,6 +55,7 @@ export const Search = () => {
       <CompletionsTextField
         id='search'
         value={searchValue}
+        loading={loading}
         onChange={(e) => setSearchValue(e.target.value)}
         name='search'
         fullWidth
