@@ -83,6 +83,7 @@ export const TrackDetails = () => {
     if (!track) return;
 
     const fetchMatchingTracks = async () => {
+      setMatchingTracksLoading(true);
       const result = await getMatchingTracks(track.id);
       setMatchingTracks(result);
       setMatchingTracksLoading(false);
