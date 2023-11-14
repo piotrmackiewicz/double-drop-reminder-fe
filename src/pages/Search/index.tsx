@@ -22,9 +22,13 @@ export const Search = () => {
 
   const searchHandler = useCallback(async () => {
     setApiCallSuccess(false);
-    const result = await search(searchValue);
-    setApiCallSuccess(true);
-    setCompletions(result.data);
+    try {
+      const result = await search(searchValue);
+      setApiCallSuccess(true);
+      setCompletions(result.data);
+    } catch (err) {
+      // TODO: error handling
+    }
   }, [searchValue]);
 
   useEffect(() => {

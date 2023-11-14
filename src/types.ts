@@ -3,6 +3,8 @@ export type Track = {
   artist: string;
   title: string;
   matching_tracks: number[];
+  thumbs_up: number;
+  thumbs_down: number;
 };
 
 export type MatchTracksBody = {

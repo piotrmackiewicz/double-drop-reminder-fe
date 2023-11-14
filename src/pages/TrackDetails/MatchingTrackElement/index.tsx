@@ -1,6 +1,5 @@
-import { IconButton, ListItem, ListItemText } from '@mui/material';
+import { ListItem, ListItemText } from '@mui/material';
 import { Track } from 'types';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { ROUTES } from 'router';
 import { useModeContext } from 'context/modeContext';
 import {
@@ -11,25 +10,15 @@ import {
 
 interface Props {
   track: Track;
-  onDeleteMatchingTrack: (track: Track) => void;
 }
 
-export const MatchingTrackElement = ({
-  track,
-  onDeleteMatchingTrack,
-}: Props) => {
+export const MatchingTrackElement = ({ track }: Props) => {
   const { id, title, artist } = track;
   const { isPreparationMode } = useModeContext();
 
   if (isPreparationMode) {
     return (
-      <ListItem
-        secondaryAction={
-          <IconButton edge='end' onClick={() => onDeleteMatchingTrack(track)}>
-            <DeleteIcon />
-          </IconButton>
-        }
-      >
+      <ListItem>
         <MatchingTrackLink
           to={ROUTES.TrackDetails.replace(':id', id.toString())}
           state={{ track }}

@@ -70,10 +70,6 @@ export const getMatchingTracks = async (id: number): Promise<Track[]> => {
   return result.data;
 };
 
-export const deleteMatchingTrack = async (data: MatchTracksBody) => {
-  await apiClient.delete(`${API_URL}/matching-tracks`, { data });
-};
-
 export const matchTracks = async (body: MatchTracksBody) => {
   await apiClient.post(`${API_URL}/matching-tracks`, body);
 };
