@@ -9,5 +9,11 @@ export const Container = styled(MuiContainer)`
 
 export const BackButtonLink = styled(Button)`
   display: block;
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  align-items: center;
   margin-bottom: 20px !important;
+  gap: 61px;
 `;

@@ -3,9 +3,11 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { ROUTES } from 'router';
 
 export const ProtectedRoute = () => {
-  const { idToken } = useAuthContext();
+  const { auth } = useAuthContext();
 
-  if (idToken) {
+  console.log(auth.currentUser);
+
+  if (auth.currentUser) {
     return <Outlet />;
   } else {
     return <Navigate to={ROUTES.Login} replace />;

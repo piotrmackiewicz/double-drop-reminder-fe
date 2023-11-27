@@ -19,3 +19,16 @@ export const DialogActions = styled(MaterialDialogActions)`
   justify-content: space-between !important;
   padding: 8px 0 !important;
 `;
+
+export const RateButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
+
+export const SuccessContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+`;

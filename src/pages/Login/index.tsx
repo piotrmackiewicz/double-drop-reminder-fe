@@ -1,31 +1,43 @@
 import { Stack } from '@mui/material';
-import { login } from 'api';
 import { AuthForm, AuthFormInputs } from 'components/AuthForm';
 import { Logo } from 'components/Logo';
 import { useAuthContext } from 'context/authContext';
 import { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'router';
+import { FirebaseError } from 'firebase/app';
 
 export const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { setIdToken } = useAuthContext();
+  const { auth } = useAuthContext();
 
   const handleSubmit = async (data: AuthFormInputs) => {
     setLoading(true);
-    const response = await login(data);
-    if (response.status === 200) {
-      setIdToken(response.data.idToken);
+    setError('');
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
       navigate(ROUTES.Search);
+    } catch (err) {
+      if ((err as FirebaseError).code === 'auth/invalid-credential') {
+        setError('Invalid credentials');
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <Stack spacing={3}>
       <Logo />
-      <AuthForm mode='login' onSubmit={handleSubmit} loading={loading} />
+      <AuthForm
+        mode='login'
+        onSubmit={handleSubmit}
+        loading={loading}
+        error={error}
+      />
     </Stack>
   );
 };

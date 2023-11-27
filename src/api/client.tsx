@@ -11,21 +11,22 @@ export const AxiosInterceptor = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { idToken, setIdToken } = useAuthContext();
+  const { auth } = useAuthContext();
 
   useEffect(() => {
-    const reqInterceptor = apiClient.interceptors.request.use((config) => {
-      config.headers.Authorization = idToken;
-      return config;
-    });
+    const reqInterceptor = apiClient.interceptors.request.use(
+      async (config) => {
+        const idToken = await auth.currentUser?.getIdToken();
+        config.headers.Authorization = idToken;
+        return config;
+      }
+    );
 
     const resInterceptor = apiClient.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
-        console.log(error);
         if (error.response?.status === 401) {
-          localStorage.removeItem('idToken');
-          setIdToken('');
+          auth.signOut();
         }
       }
     );
@@ -34,7 +35,7 @@ export const AxiosInterceptor = ({
       apiClient.interceptors.request.eject(reqInterceptor);
       apiClient.interceptors.response.eject(resInterceptor);
     };
-  }, [idToken, setIdToken]);
+  }, [auth]);
 
   return <>{children}</>;
 };

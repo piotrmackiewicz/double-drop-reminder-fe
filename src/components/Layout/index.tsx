@@ -1,16 +1,11 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from 'router';
-import { BackButtonLink, Container } from './Layout.styled';
+import { BackButtonLink, ButtonsContainer, Container } from './Layout.styled';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useModeContext } from 'context/modeContext';
+import { Button } from '@mui/material';
 
-interface Props {
-  noBackButton?: boolean;
-}
-
-// TODO: make "Back to Search" button
-
-export const Layout = ({ noBackButton }: Props) => {
+export const Layout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { isPreparationMode } = useModeContext();
@@ -21,14 +16,22 @@ export const Layout = ({ noBackButton }: Props) => {
     <>
       <Container maxWidth='sm'>
         {!pathsWithoutBackButton.includes(pathname as ROUTES) && (
-          <BackButtonLink
-            variant={isPreparationMode ? 'text' : 'outlined'}
-            startIcon={<ArrowBackIcon />}
-            size={isPreparationMode ? 'small' : 'large'}
-            onClick={() => navigate(-1)}
-          >
-            Back
-          </BackButtonLink>
+          <ButtonsContainer>
+            <BackButtonLink
+              variant={isPreparationMode ? 'text' : 'outlined'}
+              startIcon={<ArrowBackIcon />}
+              size={isPreparationMode ? 'small' : 'large'}
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </BackButtonLink>
+            <Button
+              size='large'
+              onClick={() => navigate(ROUTES.Search, { replace: true })}
+            >
+              Search
+            </Button>
+          </ButtonsContainer>
         )}
 
         <Outlet />

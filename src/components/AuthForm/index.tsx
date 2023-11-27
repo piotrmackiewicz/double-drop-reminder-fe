@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { Alert, TextField } from '@mui/material';
 import { Form } from './AuthForm.styled';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -15,6 +15,7 @@ export interface AuthFormInputs {
 interface Props {
   mode: 'login' | 'register';
   onSubmit: (data: AuthFormInputs) => void;
+  error?: string;
   loading?: boolean;
 }
 
@@ -25,7 +26,7 @@ const schema = yup
   })
   .required();
 
-export const AuthForm = ({ mode, onSubmit, loading }: Props) => {
+export const AuthForm = ({ mode, onSubmit, loading, error }: Props) => {
   const {
     handleSubmit,
     control,
@@ -72,6 +73,7 @@ export const AuthForm = ({ mode, onSubmit, loading }: Props) => {
             />
           )}
         />
+        {!!error ? <Alert severity='error'>{error}</Alert> : null}
         <LoadingButton
           type='submit'
           variant='contained'

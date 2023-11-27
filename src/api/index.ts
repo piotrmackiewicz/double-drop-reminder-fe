@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { MatchTracksBody, SearchQueryParams, Track } from 'types';
+import {
+  MatchTracksBody,
+  MatchingTrack,
+  SearchQueryParams,
+  Track,
+  UserRatings,
+} from 'types';
 import { apiClient } from './client';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -25,13 +31,10 @@ export const login = async ({
   email: string;
   password: string;
 }) => {
-  const result = await axios.post<{ idToken: string }>(
-    `${API_URL}/auth/login`,
-    {
-      email,
-      password,
-    }
-  );
+  const result = await axios.post(`${API_URL}/auth/login`, {
+    email,
+    password,
+  });
   return result;
 };
 
@@ -63,8 +66,10 @@ export const addTrack = async (body: {
   return result.data;
 };
 
-export const getMatchingTracks = async (id: number): Promise<Track[]> => {
-  const result = await apiClient.get<Track[]>(
+export const getMatchingTracks = async (
+  id: number
+): Promise<MatchingTrack[]> => {
+  const result = await apiClient.get<MatchingTrack[]>(
     `${API_URL}/matching-tracks/${id}`
   );
   return result.data;
@@ -72,4 +77,13 @@ export const getMatchingTracks = async (id: number): Promise<Track[]> => {
 
 export const matchTracks = async (body: MatchTracksBody) => {
   await apiClient.post(`${API_URL}/matching-tracks`, body);
+};
+
+export const getUserRating = async () => {
+  const result = await apiClient.get<UserRatings>('/user-rating');
+  return result.data;
+};
+
+export const rateMatch = async (matchId: number, rate: number) => {
+  await apiClient.post(`${API_URL}/user-rating`, { matchId, rate });
 };
