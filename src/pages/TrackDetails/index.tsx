@@ -7,7 +7,7 @@ import {
   Modal,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { MatchingTrack, Track } from 'types';
 import {
@@ -55,6 +55,14 @@ export const TrackDetails = () => {
   const [isRateLoading, setIsRateLoading] = useState(false);
   const [isRateSuccess, setIsRateSuccess] = useState(false);
 
+  const fetchMatchingTracks = useCallback(async () => {
+    if (!track) return;
+    setMatchingTracksLoading(true);
+    const result = await getMatchingTracks(track.id);
+    setMatchingTracks(result);
+    setMatchingTracksLoading(false);
+  }, [track]);
+
   const handleRate = async (rate: number) => {
     if (!ratingMatchId) return;
     setIsRateLoading(true);
@@ -62,6 +70,7 @@ export const TrackDetails = () => {
       await rateMatch(ratingMatchId, rate);
       setIsRateSuccess(true);
       fetchUserRatings();
+      fetchMatchingTracks();
     } catch (e) {
       // TODO: handle error
     } finally {
@@ -76,10 +85,15 @@ export const TrackDetails = () => {
 
   const fetchUserRatings = async () => {
     const result = await getUserRating();
-    setUserRatings([
-      ...result.thumb_up_matches_ids,
-      ...result.thumb_down_matches_ids,
-    ]);
+    const { thumb_up_matches_ids, thumb_down_matches_ids } = result;
+    let ratings: number[] = [];
+    if (thumb_up_matches_ids) {
+      ratings = [...ratings, ...thumb_up_matches_ids];
+    }
+    if (thumb_down_matches_ids) {
+      ratings = [...ratings, ...thumb_down_matches_ids];
+    }
+    setUserRatings(ratings);
   };
 
   useEffect(() => {
@@ -100,16 +114,9 @@ export const TrackDetails = () => {
   useEffect(() => {
     if (!track) return;
 
-    const fetchMatchingTracks = async () => {
-      setMatchingTracksLoading(true);
-      const result = await getMatchingTracks(track.id);
-      setMatchingTracks(result);
-      setMatchingTracksLoading(false);
-    };
-
     fetchUserRatings();
     fetchMatchingTracks();
-  }, [track]);
+  }, [fetchMatchingTracks, track]);
 
   return (
     <>

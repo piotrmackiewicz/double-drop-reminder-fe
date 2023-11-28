@@ -30,7 +30,7 @@ export const MatchingTrackElement = ({
   const { isPreparationMode } = useModeContext();
 
   const rating = thumbs_up - thumbs_down;
-  const percentage = (thumbs_up / (thumbs_up + thumbs_down)) * 100;
+  const percentage = Math.round((thumbs_up / (thumbs_up + thumbs_down)) * 100);
   const totalThumbs = thumbs_up + thumbs_down;
 
   console.log(title, isRated, totalThumbs);
