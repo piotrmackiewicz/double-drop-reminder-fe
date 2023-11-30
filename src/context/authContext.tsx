@@ -15,22 +15,37 @@ const firebaseAuth = getAuth(firebaseApp);
 
 type AuthContextType = {
   auth: Auth;
+  spotifyAccessToken: string;
+  setSpotifyAccessToken: (token: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [auth] = useState<Auth>(firebaseAuth);
-
+  const [spotifyAccessToken, setSpotifyAccessToken] = useState<string>('');
   return (
-    <AuthContext.Provider value={{ auth }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        auth,
+        spotifyAccessToken,
+        setSpotifyAccessToken,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 };
 
 export const useAuthContext = () => {
-  const { auth } = useContext(AuthContext) as AuthContextType;
+  const { auth, spotifyAccessToken, setSpotifyAccessToken } = useContext(
+    AuthContext
+  ) as AuthContextType;
 
   return {
     auth,
+    isAuth: !!auth.currentUser,
+    spotifyAccessToken,
+    setSpotifyAccessToken,
   };
 };

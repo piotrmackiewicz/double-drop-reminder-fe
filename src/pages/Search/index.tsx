@@ -1,94 +1,27 @@
-import { ListItemButton, ListItemText, Stack } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import { search } from 'api';
-import { CompletionsListLink, TrackNotFoundItem } from './Search.styled';
+import { Stack } from '@mui/material';
 import { ROUTES } from 'router';
-import { CompletionsTextField } from 'components/CompletionsTextField';
-import { Track } from 'types';
+import { SpotifySearchTrack } from 'types';
 import { Logo } from 'components/Logo';
 import { SwitchModeButton } from 'components/SwitchModeButton';
 import { useModeContext } from 'context/modeContext';
+import { SpotifySearch } from 'components/SpotifySearch';
+import { useNavigate } from 'react-router-dom';
 
 export const Search = () => {
-  const [searchValue, setSearchValue] = useState('');
-  const [completions, setCompletions] = useState<Track[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [apiCallSuccess, setApiCallSuccess] = useState(false);
+  const navigate = useNavigate();
   const { isPreparationMode } = useModeContext();
 
-  const handleClear = () => {
-    setApiCallSuccess(false);
-    setSearchValue('');
+  const handleCompletionClick = (completion: SpotifySearchTrack) => {
+    navigate(ROUTES.TrackDetails.replace(':id', completion.id.toString()), {
+      state: { track: completion },
+    });
   };
-
-  const searchHandler = useCallback(async () => {
-    setApiCallSuccess(false);
-    setLoading(true);
-    try {
-      const result = await search(searchValue);
-      setApiCallSuccess(true);
-      setCompletions(result.data);
-    } catch (err) {
-      // TODO: error handling
-    } finally {
-      setLoading(false);
-    }
-  }, [searchValue]);
-
-  useEffect(() => {
-    if (searchValue.length === 0) {
-      setCompletions([]);
-      setApiCallSuccess(false);
-      return;
-    }
-
-    const delayInputTimeoutId = setTimeout(() => {
-      searchHandler();
-    }, 300);
-    return () => clearTimeout(delayInputTimeoutId);
-  }, [searchHandler, searchValue]);
 
   return (
     <Stack spacing={3}>
       <SwitchModeButton />
       {isPreparationMode && <Logo />}
-      <CompletionsTextField
-        id='search'
-        value={searchValue}
-        loading={loading}
-        onChange={(e) => setSearchValue(e.target.value)}
-        name='search'
-        fullWidth
-        autoFocus
-        placeholder='Search for an artist or track...'
-        onClear={handleClear}
-        completions={completions}
-        completionsListElementRenderer={(completion) => (
-          <CompletionsListLink
-            to={ROUTES.TrackDetails.replace(':id', completion.id.toString())}
-            state={{ track: completion }}
-          >
-            <ListItemButton>
-              <ListItemText
-                primary={completion.title}
-                secondary={completion.artist}
-              />
-            </ListItemButton>
-          </CompletionsListLink>
-        )}
-        showNoCompletionsHint={apiCallSuccess}
-        noCompletionsHintRenderer={() =>
-          isPreparationMode ? (
-            <CompletionsListLink to={ROUTES.AddTrack}>
-              <ListItemButton>
-                <ListItemText primary='No track found? Click here to add new one!' />
-              </ListItemButton>
-            </CompletionsListLink>
-          ) : completions.length === 0 ? (
-            <TrackNotFoundItem primary='Track not found :(' />
-          ) : null
-        }
-      />
+      <SpotifySearch onCompletionClick={handleCompletionClick} />
     </Stack>
   );
 };

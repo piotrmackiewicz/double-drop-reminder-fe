@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Search } from 'pages/Search';
 import { TrackDetails } from 'pages/TrackDetails';
-import { AddTrack } from 'pages/AddTrack';
 import { AddMatchingTrack } from 'pages/AddMatchingTrack';
 import { Default } from 'pages/Default';
 import { Layout } from 'components/Layout';
@@ -40,10 +39,6 @@ export const router = createBrowserRouter([
           {
             path: ROUTES.TrackDetails,
             element: <TrackDetails />,
-          },
-          {
-            path: ROUTES.AddTrack,
-            element: <AddTrack />,
           },
           {
             path: ROUTES.AddMatchingTrack,

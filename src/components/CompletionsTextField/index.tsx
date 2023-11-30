@@ -13,7 +13,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { CompletionsList, Container } from './CompletionsTextField.styled';
 
 interface GenericTypeConstraint {
-  id: number;
+  id: number | string;
 }
 
 interface Props<T extends GenericTypeConstraint> extends OutlinedInputProps {

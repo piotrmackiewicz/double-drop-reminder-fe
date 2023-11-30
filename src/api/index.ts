@@ -1,10 +1,11 @@
 import axios from 'axios';
 import {
+  Match,
   MatchTracksBody,
-  MatchingTrack,
   SearchQueryParams,
+  SpotifySearchTrack,
   Track,
-  UserRatings,
+  UserRating,
 } from 'types';
 import { apiClient } from './client';
 
@@ -53,10 +54,10 @@ export const search = async (
   return result;
 };
 
-export const getTrack = async (id: string): Promise<Track> => {
-  const result = await apiClient.get<Track>(`${API_URL}/track/${id}`);
-  return result.data;
-};
+// export const getTrack = async (id: string): Promise<Track> => {
+//   const result = await apiClient.get<Track>(`${API_URL}/track/${id}`);
+//   return result.data;
+// };
 
 export const addTrack = async (body: {
   title: string;
@@ -66,24 +67,111 @@ export const addTrack = async (body: {
   return result.data;
 };
 
-export const getMatchingTracks = async (
-  id: number
-): Promise<MatchingTrack[]> => {
-  const result = await apiClient.get<MatchingTrack[]>(
-    `${API_URL}/matching-tracks/${id}`
-  );
+export const getMatches = async (id: string): Promise<Match[]> => {
+  const result = await apiClient.get<Match[]>(`${API_URL}/matches/${id}`);
   return result.data;
 };
 
 export const matchTracks = async (body: MatchTracksBody) => {
-  await apiClient.post(`${API_URL}/matching-tracks`, body);
+  await apiClient.post(`${API_URL}/matches`, body);
 };
 
 export const getUserRating = async () => {
-  const result = await apiClient.get<UserRatings>('/user-rating');
+  const result = await apiClient.get<UserRating[]>('/user-rating');
   return result.data;
 };
 
-export const rateMatch = async (matchId: number, rate: number) => {
+export const rateMatch = async (matchId: string, rate: boolean) => {
   await apiClient.post(`${API_URL}/user-rating`, { matchId, rate });
+};
+
+export const getSpotifyToken = async () => {
+  const result = await apiClient.get<{ accessToken: string }>(
+    `${API_URL}/search/get-spotify-token`
+  );
+  return result.data;
+};
+
+export const searchSpotify = async (
+  query: string,
+  token: string
+): Promise<SpotifySearchTrack[]> => {
+  const result = await axios.get<{
+    tracks: {
+      items: {
+        id: string;
+        name: string;
+        preview_url: string;
+        artists: {
+          name: string;
+        }[];
+      }[];
+    };
+  }>(`https://api.spotify.com/v1/search`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: { q: query, type: 'track' },
+  });
+
+  return result.data.tracks.items.map(({ id, name, preview_url, artists }) => ({
+    id,
+    name,
+    preview_url,
+    artists: artists.map((artist) => artist.name),
+  }));
+};
+
+export const getTrack = async (
+  trackId: string,
+  token: string
+): Promise<SpotifySearchTrack> => {
+  const result = await axios.get<{
+    id: string;
+    name: string;
+    preview_url: string;
+    artists: {
+      name: string;
+    }[];
+  }>(`https://api.spotify.com/v1/tracks/${trackId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { id, name, preview_url, artists } = result.data;
+  return {
+    id,
+    name,
+    preview_url,
+    artists: artists.map((artist) => artist.name),
+  };
+};
+
+export const getTracks = async (
+  tracksIds: string[],
+  token: string
+): Promise<SpotifySearchTrack[]> => {
+  const result = await axios.get<{
+    tracks: {
+      id: string;
+      name: string;
+      preview_url: string;
+      artists: {
+        name: string;
+      }[];
+    }[];
+  }>(`https://api.spotify.com/v1/tracks`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: { ids: tracksIds.join(',') },
+  });
+
+  return result.data.tracks.map(({ id, name, preview_url, artists }) => ({
+    id,
+    name,
+    preview_url,
+    artists: artists.map((artist) => artist.name),
+  }));
 };

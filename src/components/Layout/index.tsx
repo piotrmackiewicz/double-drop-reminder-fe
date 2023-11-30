@@ -4,13 +4,29 @@ import { BackButtonLink, ButtonsContainer, Container } from './Layout.styled';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useModeContext } from 'context/modeContext';
 import { Button } from '@mui/material';
+import { useEffect } from 'react';
+import { useAuthContext } from 'context/authContext';
+import { getSpotifyToken } from 'api';
 
 export const Layout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { isAuth, spotifyAccessToken, setSpotifyAccessToken } =
+    useAuthContext();
   const { isPreparationMode } = useModeContext();
 
   const pathsWithoutBackButton = [ROUTES.Search, ROUTES.Register, ROUTES.Login];
+
+  useEffect(() => {
+    const authSpotify = async () => {
+      const result = await getSpotifyToken();
+      setSpotifyAccessToken(result.accessToken);
+    };
+
+    if (isAuth && !spotifyAccessToken) {
+      authSpotify();
+    }
+  }, [isAuth, setSpotifyAccessToken, spotifyAccessToken]);
 
   return (
     <>
@@ -18,7 +34,7 @@ export const Layout = () => {
         {!pathsWithoutBackButton.includes(pathname as ROUTES) && (
           <ButtonsContainer>
             <BackButtonLink
-              variant={isPreparationMode ? 'text' : 'outlined'}
+              variant='outlined'
               startIcon={<ArrowBackIcon />}
               size={isPreparationMode ? 'small' : 'large'}
               onClick={() => navigate(-1)}
@@ -26,8 +42,9 @@ export const Layout = () => {
               Back
             </BackButtonLink>
             <Button
-              size='large'
+              variant='outlined'
               onClick={() => navigate(ROUTES.Search, { replace: true })}
+              size={isPreparationMode ? 'small' : 'large'}
             >
               Search
             </Button>

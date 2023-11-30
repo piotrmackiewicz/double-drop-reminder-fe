@@ -26,14 +26,12 @@ export const MatchingTrackElement = ({
   isLast,
   onRateClick,
 }: Props) => {
-  const { id, title, artist, thumbs_up, thumbs_down } = track;
+  const { id, name, artists, thumbs_up, thumbs_down } = track;
   const { isPreparationMode } = useModeContext();
 
   const rating = thumbs_up - thumbs_down;
   const percentage = Math.round((thumbs_up / (thumbs_up + thumbs_down)) * 100);
   const totalThumbs = thumbs_up + thumbs_down;
-
-  console.log(title, isRated, totalThumbs);
 
   const handleRateClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -51,8 +49,8 @@ export const MatchingTrackElement = ({
           state={{ track }}
         >
           <div>
-            <Typography variant='body1'>{title}</Typography>
-            <Typography variant='body2'>{artist}</Typography>
+            <Typography variant='body1'>{name}</Typography>
+            <Typography variant='body2'>{artists.join(', ')}</Typography>
           </div>
           {/* TODO: rating is not rendered after successful rate */}
           <ThumbsOuterContainer>
@@ -85,7 +83,10 @@ export const MatchingTrackElement = ({
           to={ROUTES.TrackDetails.replace(':id', id.toString())}
           state={{ track }}
         >
-          <PreparationModeListItemText primary={title} secondary={artist} />
+          <PreparationModeListItemText
+            primary={name}
+            secondary={artists.join(', ')}
+          />
           {totalThumbs > 0 && (
             <>
               <ThumbsContainer>

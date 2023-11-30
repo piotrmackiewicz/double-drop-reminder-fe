@@ -9,14 +9,14 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { MatchingTrack, Track } from 'types';
+import { MatchingTrack, SpotifySearchTrack, Track } from 'types';
 import {
   Container,
   LoaderContainer,
   RateButtonsContainer,
   SuccessContainer,
 } from './TrackDetails.styled';
-import { getMatchingTracks, getTrack, getUserRating, rateMatch } from 'api';
+import { getMatches, getTrack, getTracks, getUserRating, rateMatch } from 'api';
 import AddIcon from '@mui/icons-material/Add';
 import { ROUTES } from 'router';
 import { MatchingTrackElement } from './MatchingTrackElement';
@@ -24,10 +24,11 @@ import { useModeContext } from 'context/modeContext';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useAuthContext } from 'context/authContext';
 
 interface LocationState {
   state: {
-    track: Track;
+    track: SpotifySearchTrack;
   };
 }
 
@@ -46,24 +47,52 @@ export const TrackDetails = () => {
   let { id } = useParams();
   const location = useLocation();
   const { state }: LocationState = location;
+  const { spotifyAccessToken } = useAuthContext();
   const { isPreparationMode } = useModeContext();
-  const [track, setTrack] = useState<Track>();
+  const [track, setTrack] = useState<SpotifySearchTrack>();
   const [matchingTracks, setMatchingTracks] = useState<MatchingTrack[]>([]);
   const [matchingTracksLoading, setMatchingTracksLoading] = useState(true);
-  const [userRatings, setUserRatings] = useState<number[]>([]);
-  const [ratingMatchId, setRatingMatchId] = useState<null | number>(null);
+  const [ratingMatchId, setRatingMatchId] = useState<null | string>(null);
   const [isRateLoading, setIsRateLoading] = useState(false);
   const [isRateSuccess, setIsRateSuccess] = useState(false);
+  const [ratedMatchesIds, setRatedMatchesIds] = useState<string[]>([]);
 
   const fetchMatchingTracks = useCallback(async () => {
     if (!track) return;
     setMatchingTracksLoading(true);
-    const result = await getMatchingTracks(track.id);
-    setMatchingTracks(result);
+    const result = await getMatches(track.id);
+    const matchingTracksIds = result.map((match) =>
+      match.track_1 === track.id ? match.track_2 : match.track_1
+    );
+    if (matchingTracksIds.length > 0) {
+      const fetchedTracks = await getTracks(
+        matchingTracksIds,
+        spotifyAccessToken
+      );
+      const matchingTracks = [];
+      for (let i = 0; i < result.length; i++) {
+        const match = result.find(
+          (r) =>
+            r.track_1 === fetchedTracks[i].id ||
+            r.track_2 === fetchedTracks[i].id
+        );
+        if (match) {
+          const fetchedTrack = fetchedTracks[i];
+          const matchingTrack = {
+            ...fetchedTrack,
+            match_id: match.id,
+            thumbs_up: match.thumbs_up,
+            thumbs_down: match.thumbs_down,
+          };
+          matchingTracks.push(matchingTrack);
+        }
+      }
+      setMatchingTracks(matchingTracks);
+    }
     setMatchingTracksLoading(false);
-  }, [track]);
+  }, [spotifyAccessToken, track]);
 
-  const handleRate = async (rate: number) => {
+  const handleRate = async (rate: boolean) => {
     if (!ratingMatchId) return;
     setIsRateLoading(true);
     try {
@@ -85,22 +114,14 @@ export const TrackDetails = () => {
 
   const fetchUserRatings = async () => {
     const result = await getUserRating();
-    const { thumb_up_matches_ids, thumb_down_matches_ids } = result;
-    let ratings: number[] = [];
-    if (thumb_up_matches_ids) {
-      ratings = [...ratings, ...thumb_up_matches_ids];
-    }
-    if (thumb_down_matches_ids) {
-      ratings = [...ratings, ...thumb_down_matches_ids];
-    }
-    setUserRatings(ratings);
+    setRatedMatchesIds(result.map((r) => r.match_id));
   };
 
   useEffect(() => {
     if (!state?.track) {
       const fetchTrack = async () => {
         if (id) {
-          const fetchedTrack = await getTrack(id);
+          const fetchedTrack = await getTrack(id, spotifyAccessToken);
           setTrack(fetchedTrack);
         }
       };
@@ -109,21 +130,26 @@ export const TrackDetails = () => {
     } else {
       setTrack(state.track);
     }
-  }, [id, state]);
+  }, [id, spotifyAccessToken, state]);
 
   useEffect(() => {
     if (!track) return;
 
     fetchUserRatings();
-    fetchMatchingTracks();
+  }, [fetchMatchingTracks, track]);
+
+  useEffect(() => {
+    if (track) {
+      fetchMatchingTracks();
+    }
   }, [fetchMatchingTracks, track]);
 
   return (
     <>
       <Container>
         <div>
-          <Typography variant='h3'>{track?.title}</Typography>
-          <Typography variant='h6'>{track?.artist}</Typography>
+          <Typography variant='h3'>{track?.name}</Typography>
+          <Typography variant='h6'>{track?.artists.join(', ')}</Typography>
         </div>
         <>
           <List subheader={isPreparationMode ? 'Matching tracks:' : ''}>
@@ -135,7 +161,7 @@ export const TrackDetails = () => {
               matchingTracks.map((matchingTrack) => (
                 <MatchingTrackElement
                   key={matchingTrack.id}
-                  isRated={userRatings.includes(matchingTrack.match_id)}
+                  isRated={ratedMatchesIds.includes(matchingTrack.match_id)}
                   onRateClick={() => setRatingMatchId(matchingTrack.match_id)}
                   track={matchingTrack}
                 />
@@ -149,7 +175,10 @@ export const TrackDetails = () => {
                 ':id',
                 track?.id.toString() || ''
               )}
-              state={{ originTrack: track }}
+              state={{
+                originTrack: track,
+                matchingTracksIds: matchingTracks.map((mt) => mt.id),
+              }}
             >
               <Button startIcon={<AddIcon />} variant='outlined' size='small'>
                 Add matching track
@@ -185,10 +214,13 @@ export const TrackDetails = () => {
                     <CircularProgress />
                   ) : (
                     <>
-                      <IconButton size='large' onClick={() => handleRate(1)}>
+                      <IconButton size='large' onClick={() => handleRate(true)}>
                         <ThumbUpOutlinedIcon color='success' fontSize='large' />
                       </IconButton>
-                      <IconButton size='large' onClick={() => handleRate(0)}>
+                      <IconButton
+                        size='large'
+                        onClick={() => handleRate(false)}
+                      >
                         <ThumbDownOutlinedIcon color='error' fontSize='large' />
                       </IconButton>
                     </>

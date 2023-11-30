@@ -5,8 +5,6 @@ import { ROUTES } from 'router';
 export const ProtectedRoute = () => {
   const { auth } = useAuthContext();
 
-  console.log(auth.currentUser);
-
   if (auth.currentUser) {
     return <Outlet />;
   } else {

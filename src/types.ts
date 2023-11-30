@@ -4,22 +4,37 @@ export type Track = {
   title: string;
 };
 
-export type MatchingTrack = Track & {
-  match_id: number;
+export type Match = {
+  id: string;
+  track_1: string;
+  track_2: string;
   thumbs_up: number;
   thumbs_down: number;
 };
 
 export type MatchTracksBody = {
-  originTrackId: number;
-  matchingTrackId: number;
+  originTrackId: string;
+  matchingTrackId: string;
 };
 
 export type SearchQueryParams = {
   [key in string]: string;
 };
 
-export type UserRatings = {
-  thumb_up_matches_ids: number[];
-  thumb_down_matches_ids: number[];
+export type UserRating = {
+  id: string;
+  match_id: string;
+};
+
+export type SpotifySearchTrack = {
+  id: string;
+  name: string;
+  artists: string[];
+  preview_url: string | null;
+};
+
+export type MatchingTrack = SpotifySearchTrack & {
+  match_id: string;
+  thumbs_up: number;
+  thumbs_down: number;
 };
