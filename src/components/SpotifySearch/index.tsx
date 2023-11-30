@@ -60,7 +60,7 @@ export const SpotifySearch = ({
   useEffect(() => {
     const delayInputTimeoutId = setTimeout(() => {
       searchHandler();
-    }, 300);
+    }, 1000);
     return () => clearTimeout(delayInputTimeoutId);
   }, [searchHandler, searchValue]);
 
