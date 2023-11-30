@@ -52,7 +52,6 @@ export const MatchingTrackElement = ({
             <Typography variant='body1'>{name}</Typography>
             <Typography variant='body2'>{artists.join(', ')}</Typography>
           </div>
-          {/* TODO: rating is not rendered after successful rate */}
           <ThumbsOuterContainer>
             {totalThumbs > 0 && (
               <ThumbsContainer>

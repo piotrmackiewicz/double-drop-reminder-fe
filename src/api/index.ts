@@ -54,11 +54,6 @@ export const search = async (
   return result;
 };
 
-// export const getTrack = async (id: string): Promise<Track> => {
-//   const result = await apiClient.get<Track>(`${API_URL}/track/${id}`);
-//   return result.data;
-// };
-
 export const addTrack = async (body: {
   title: string;
   artist: string;
