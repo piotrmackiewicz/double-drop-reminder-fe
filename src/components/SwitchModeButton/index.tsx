@@ -1,7 +1,13 @@
 import { Button, Dialog, DialogActions, DialogTitle } from '@mui/material';
 import { useModeContext } from 'context/modeContext';
 import { useState } from 'react';
-import { ActionButtons } from './SwitchModeButton.styled';
+import {
+  ActionButtons,
+  ButtonsContainer,
+  ModeButton,
+} from './SwitchModeButton.styled';
+import { Link } from 'react-router-dom';
+import { ROUTES } from 'router';
 
 export const SwitchModeButton = () => {
   const { mode, switchMode } = useModeContext();
@@ -21,14 +27,19 @@ export const SwitchModeButton = () => {
   };
 
   return (
-    <>
-      <Button
+    <ButtonsContainer>
+      <ModeButton
         variant='outlined'
         onClick={handleSwitchMode}
         color={mode === 'performance' ? 'error' : 'primary'}
       >
         {buttonText}
-      </Button>
+      </ModeButton>
+      {/* <Button variant='outlined'>
+        <Link to={ROUTES.MyAccount} style={{ fontWeight: 500 }}>
+          My Account
+        </Link>
+      </Button> */}
       <Dialog
         onClose={() => setShowConfirmDialog(false)}
         open={showConfirmDialog}
@@ -58,6 +69,6 @@ export const SwitchModeButton = () => {
           </ActionButtons>
         </DialogActions>
       </Dialog>
-    </>
+    </ButtonsContainer>
   );
 };

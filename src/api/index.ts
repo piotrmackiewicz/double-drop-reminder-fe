@@ -170,3 +170,12 @@ export const getTracks = async (
     artists: artists.map((artist) => artist.name),
   }));
 };
+
+export const getMatchesByIds = async (ids: string[]): Promise<Match[]> => {
+  const result = await apiClient.get(`${API_URL}/matches`, {
+    params: {
+      ids: ids,
+    },
+  });
+  return result.data;
+};

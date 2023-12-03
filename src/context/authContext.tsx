@@ -24,6 +24,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [auth] = useState<Auth>(firebaseAuth);
   const [spotifyAccessToken, setSpotifyAccessToken] = useState<string>('');
+
   return (
     <AuthContext.Provider
       value={{

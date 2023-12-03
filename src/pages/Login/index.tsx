@@ -2,14 +2,14 @@ import { Stack } from '@mui/material';
 import { AuthForm, AuthFormInputs } from 'components/AuthForm';
 import { Logo } from 'components/Logo';
 import { useAuthContext } from 'context/authContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'router';
 import { FirebaseError } from 'firebase/app';
 
 export const Login = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { auth } = useAuthContext();
@@ -28,6 +28,17 @@ export const Login = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        await auth.updateCurrentUser(user);
+        navigate(ROUTES.Search);
+      } else {
+        setLoading(false);
+      }
+    });
+  }, [auth, navigate]);
 
   return (
     <Stack spacing={3}>

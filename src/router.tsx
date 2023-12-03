@@ -7,12 +7,13 @@ import { Layout } from 'components/Layout';
 import { Login } from 'pages/Login';
 import { Register } from 'pages/Register';
 import { ProtectedRoute } from 'components/ProtectedRoute';
+// import { MyAccount } from 'pages/MyAccount';
 
 export enum ROUTES {
   Search = '/search',
   TrackDetails = '/track/:id',
   AddMatchingTrack = '/track/:id/add-matching-track',
-  AddTrack = '/add-track',
+  // MyAccount = '/my-account',
   Register = '/register',
   Login = '/login',
 }
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
             path: ROUTES.AddMatchingTrack,
             element: <AddMatchingTrack />,
           },
+          // {
+          //   path: ROUTES.MyAccount,
+          //   element: <MyAccount />,
+          // },
         ],
       },
       {

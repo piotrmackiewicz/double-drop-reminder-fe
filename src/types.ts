@@ -12,6 +12,14 @@ export type Match = {
   thumbs_down: number;
 };
 
+export type DetailedMatch = {
+  id: string;
+  track_1: SpotifySearchTrack;
+  track_2: SpotifySearchTrack;
+  thumbs_up: number;
+  thumbs_down: number;
+};
+
 export type MatchTracksBody = {
   originTrackId: string;
   matchingTrackId: string;
@@ -24,6 +32,7 @@ export type SearchQueryParams = {
 export type UserRating = {
   id: string;
   match_id: string;
+  rating: boolean;
 };
 
 export type SpotifySearchTrack = {
