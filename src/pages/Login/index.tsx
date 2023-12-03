@@ -3,7 +3,7 @@ import { AuthForm, AuthFormInputs } from 'components/AuthForm';
 import { Logo } from 'components/Logo';
 import { useAuthContext } from 'context/authContext';
 import { useEffect, useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'router';
 import { FirebaseError } from 'firebase/app';
@@ -18,8 +18,17 @@ export const Login = () => {
     setLoading(true);
     setError('');
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-      navigate(ROUTES.Search);
+      const result = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      if (result.user.emailVerified) {
+        navigate(ROUTES.Search);
+      } else {
+        setError('Please verify your email address to login');
+        await signOut(auth);
+      }
     } catch (err) {
       if ((err as FirebaseError).code === 'auth/invalid-credential') {
         setError('Invalid credentials');
@@ -32,8 +41,13 @@ export const Login = () => {
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        await auth.updateCurrentUser(user);
-        navigate(ROUTES.Search);
+        if (user.emailVerified) {
+          await auth.updateCurrentUser(user);
+          navigate(ROUTES.Search);
+        } else {
+          await signOut(auth);
+          setError('Please verify your email address to login');
+        }
       } else {
         setLoading(false);
       }

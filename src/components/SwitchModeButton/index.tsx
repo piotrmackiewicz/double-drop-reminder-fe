@@ -6,11 +6,15 @@ import {
   ButtonsContainer,
   ModeButton,
 } from './SwitchModeButton.styled';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'router';
+import { useAuthContext } from 'context/authContext';
+import { signOut } from 'firebase/auth';
 
 export const SwitchModeButton = () => {
   const { mode, switchMode } = useModeContext();
+  const { auth } = useAuthContext();
+  const navigate = useNavigate();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const buttonText =
@@ -24,6 +28,11 @@ export const SwitchModeButton = () => {
     } else {
       setShowConfirmDialog(true);
     }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate(ROUTES.Login);
   };
 
   return (
@@ -40,6 +49,9 @@ export const SwitchModeButton = () => {
           My Account
         </Link>
       </Button> */}
+      <Button variant='outlined' onClick={handleLogout}>
+        Logout
+      </Button>
       <Dialog
         onClose={() => setShowConfirmDialog(false)}
         open={showConfirmDialog}

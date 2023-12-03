@@ -26,7 +26,7 @@ export const Register = () => {
       {success ? (
         <SuccessContainer>
           <Typography variant='h5' textAlign='center'>
-            Your account has been registered! You can login now
+            Verification email sent! Please check your inbox.
           </Typography>
           <Link to={ROUTES.Login}>
             <Button variant='contained'>Go to Login</Button>
