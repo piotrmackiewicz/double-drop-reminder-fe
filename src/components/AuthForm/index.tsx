@@ -41,7 +41,7 @@ export const AuthForm = ({ mode, onSubmit, loading, error }: Props) => {
 
   return (
     <>
-      <Form noValidate autoComplete='off' onSubmit={handleSubmit(onFormSubmit)}>
+      <Form noValidate onSubmit={handleSubmit(onFormSubmit)}>
         <Controller
           name='email'
           control={control}

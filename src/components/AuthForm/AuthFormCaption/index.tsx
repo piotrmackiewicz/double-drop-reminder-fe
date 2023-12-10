@@ -14,11 +14,19 @@ export const AuthFormCaption = ({ mode }: Props) => {
   const linkText = mode === 'login' ? 'Register' : 'Login';
 
   return (
-    <Typography variant='caption' textAlign='center'>
-      {captionText}{' '}
-      <TargetLink
-        to={mode === 'login' ? ROUTES.Register : ROUTES.Login}
-      >{`${linkText} now`}</TargetLink>
-    </Typography>
+    <>
+      <Typography variant='caption' textAlign='center'>
+        {captionText}{' '}
+        <TargetLink
+          to={mode === 'login' ? ROUTES.Register : ROUTES.Login}
+        >{`${linkText} now`}</TargetLink>
+      </Typography>
+      {mode === 'login' ? (
+        <Typography variant='caption' textAlign='center'>
+          Forgot your password?{' '}
+          <TargetLink to={ROUTES.ForgotPassword}>Reset it</TargetLink>
+        </Typography>
+      ) : null}
+    </>
   );
 };

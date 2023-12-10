@@ -15,7 +15,12 @@ export const Layout = () => {
     useAuthContext();
   const { isPreparationMode } = useModeContext();
 
-  const pathsWithoutBackButton = [ROUTES.Search, ROUTES.Register, ROUTES.Login];
+  const pathsWithoutBackButton = [
+    ROUTES.Search,
+    ROUTES.Register,
+    ROUTES.Login,
+    ROUTES.ForgotPassword,
+  ];
 
   useEffect(() => {
     const authSpotify = async () => {

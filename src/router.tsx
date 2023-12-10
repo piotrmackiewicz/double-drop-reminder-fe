@@ -7,6 +7,7 @@ import { Layout } from 'components/Layout';
 import { Login } from 'pages/Login';
 import { Register } from 'pages/Register';
 import { ProtectedRoute } from 'components/ProtectedRoute';
+import { ForgotPassword } from 'pages/ForgotPassword';
 // import { MyAccount } from 'pages/MyAccount';
 
 export enum ROUTES {
@@ -16,6 +17,7 @@ export enum ROUTES {
   // MyAccount = '/my-account',
   Register = '/register',
   Login = '/login',
+  ForgotPassword = '/forgot-password',
 }
 
 export const router = createBrowserRouter([
@@ -29,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.Register,
         element: <Register />,
+      },
+      {
+        path: ROUTES.ForgotPassword,
+        element: <ForgotPassword />,
       },
       {
         element: <ProtectedRoute />,
