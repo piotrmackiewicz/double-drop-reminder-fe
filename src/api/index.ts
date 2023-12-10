@@ -187,3 +187,10 @@ export const getTopMatches = async (): Promise<MatchWithRating[]> => {
   );
   return result.data;
 };
+
+export const giveFeedback = async (email: string, feedback: string) => {
+  await apiClient.post(`${API_URL}/support/feedback`, {
+    email,
+    feedback,
+  });
+};

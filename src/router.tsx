@@ -8,6 +8,7 @@ import { Login } from 'pages/Login';
 import { Register } from 'pages/Register';
 import { ProtectedRoute } from 'components/ProtectedRoute';
 import { ForgotPassword } from 'pages/ForgotPassword';
+import { Feedback } from 'pages/Feedback';
 // import { MyAccount } from 'pages/MyAccount';
 
 export enum ROUTES {
@@ -18,6 +19,7 @@ export enum ROUTES {
   Register = '/register',
   Login = '/login',
   ForgotPassword = '/forgot-password',
+  Feedback = '/feedback',
 }
 
 export const router = createBrowserRouter([
@@ -50,6 +52,10 @@ export const router = createBrowserRouter([
           {
             path: ROUTES.AddMatchingTrack,
             element: <AddMatchingTrack />,
+          },
+          {
+            path: ROUTES.Feedback,
+            element: <Feedback />,
           },
           // {
           //   path: ROUTES.MyAccount,

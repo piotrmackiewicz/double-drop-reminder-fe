@@ -1,12 +1,18 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from 'router';
-import { BackButtonLink, ButtonsContainer, Container } from './Layout.styled';
+import {
+  BackButtonLink,
+  ButtonsContainer,
+  Container,
+  OuterContainer,
+} from './Layout.styled';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useModeContext } from 'context/modeContext';
 import { Button } from '@mui/material';
 import { useEffect } from 'react';
 import { useAuthContext } from 'context/authContext';
 import { getSpotifyToken } from 'api';
+import { Footer } from 'components/Footer';
 
 export const Layout = () => {
   const { pathname } = useLocation();
@@ -34,7 +40,7 @@ export const Layout = () => {
   }, [isAuth, setSpotifyAccessToken, spotifyAccessToken]);
 
   return (
-    <>
+    <OuterContainer>
       <Container maxWidth='sm'>
         {!pathsWithoutBackButton.includes(pathname as ROUTES) && (
           <ButtonsContainer>
@@ -58,6 +64,7 @@ export const Layout = () => {
 
         <Outlet />
       </Container>
-    </>
+      {isAuth ? <Footer /> : null}
+    </OuterContainer>
   );
 };

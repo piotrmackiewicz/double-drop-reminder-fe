@@ -1,6 +1,10 @@
 import { Button, Container as MuiContainer } from '@mui/material';
 import { styled } from 'styled-components';
 
+export const OuterContainer = styled.div`
+  padding-bottom: 60px;
+`;
+
 export const Container = styled(MuiContainer)`
   align-items: start;
   padding-top: 10px;
