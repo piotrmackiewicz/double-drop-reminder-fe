@@ -50,7 +50,7 @@ export const TopDoubleDrops = () => {
           <CircularProgress />
         </LoaderContainer>
       ) : (
-        <Stack spacing={4}>
+        <Stack>
           {topMatches.map((m, idx) => (
             <TopDoubleDropElement idx={idx} element={m} />
           ))}
