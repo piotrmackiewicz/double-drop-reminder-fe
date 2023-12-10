@@ -13,18 +13,6 @@ export const ThumbsOuterContainer = styled.div`
   display: flex;
 `;
 
-export const ThumbsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  & > span {
-    text-align: center;
-    width: 100px;
-  }
-`;
-
 export const PreparationModeListItem = styled(ListItem)`
   padding: 0 !important;
 `;

@@ -6,6 +6,7 @@ import { SwitchModeButton } from 'components/SwitchModeButton';
 import { useModeContext } from 'context/modeContext';
 import { SpotifySearch } from 'components/SpotifySearch';
 import { useNavigate } from 'react-router-dom';
+import { TopDoubleDrops } from 'components/TopDoubleDrops';
 
 export const Search = () => {
   const navigate = useNavigate();
@@ -18,10 +19,11 @@ export const Search = () => {
   };
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={4}>
       <SwitchModeButton />
       {isPreparationMode && <Logo />}
       <SpotifySearch onCompletionClick={handleCompletionClick} />
+      <TopDoubleDrops />
     </Stack>
   );
 };

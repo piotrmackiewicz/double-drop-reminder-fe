@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   Match,
   MatchTracksBody,
+  MatchWithRating,
   SearchQueryParams,
   SpotifySearchTrack,
   Track,
@@ -177,5 +178,12 @@ export const getMatchesByIds = async (ids: string[]): Promise<Match[]> => {
       ids: ids,
     },
   });
+  return result.data;
+};
+
+export const getTopMatches = async (): Promise<MatchWithRating[]> => {
+  const result = await apiClient.get<MatchWithRating[]>(
+    `${API_URL}/matches/top`
+  );
   return result.data;
 };

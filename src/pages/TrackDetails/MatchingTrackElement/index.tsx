@@ -6,12 +6,10 @@ import {
   MatchingTrackLink,
   PreparationModeListItem,
   PreparationModeListItemText,
-  ThumbsContainer,
   ThumbsOuterContainer,
 } from './MatchingTrackElement.styled';
-import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
-import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import { RatingThumb } from 'components/RatingThumb';
 
 interface Props {
   track: MatchingTrack;
@@ -28,10 +26,7 @@ export const MatchingTrackElement = ({
 }: Props) => {
   const { id, name, artists, thumbs_up, thumbs_down } = track;
   const { isPreparationMode } = useModeContext();
-
-  const rating = thumbs_up - thumbs_down;
   const percentage = Math.round((thumbs_up / (thumbs_up + thumbs_down)) * 100);
-  const totalThumbs = thumbs_up + thumbs_down;
 
   const handleRateClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -53,17 +48,11 @@ export const MatchingTrackElement = ({
             <Typography variant='body2'>{artists.join(', ')}</Typography>
           </div>
           <ThumbsOuterContainer>
-            {totalThumbs > 0 && (
-              <ThumbsContainer>
-                {rating > 0 ? (
-                  <ThumbUpOutlinedIcon color='success' />
-                ) : (
-                  <ThumbDownOutlinedIcon color='error' />
-                )}
-
-                <Typography variant='caption'>{`${percentage}% (${totalThumbs})`}</Typography>
-              </ThumbsContainer>
-            )}
+            <RatingThumb
+              thumbs_up={thumbs_up}
+              thumbs_down={thumbs_down}
+              percentage={percentage}
+            />
             {!isRated ? (
               <IconButton onClick={handleRateClick}>
                 <ThumbsUpDownIcon color='primary' />
@@ -86,19 +75,11 @@ export const MatchingTrackElement = ({
             primary={name}
             secondary={artists.join(', ')}
           />
-          {totalThumbs > 0 && (
-            <>
-              <ThumbsContainer>
-                {rating > 0 ? (
-                  <ThumbUpOutlinedIcon color='success' />
-                ) : (
-                  <ThumbDownOutlinedIcon color='error' />
-                )}
-
-                <Typography variant='caption'>{`${percentage}% (${totalThumbs})`}</Typography>
-              </ThumbsContainer>
-            </>
-          )}
+          <RatingThumb
+            thumbs_up={thumbs_up}
+            thumbs_down={thumbs_down}
+            percentage={percentage}
+          />
         </MatchingTrackLink>
       </PreparationModeListItem>
       {!isLast && <Divider />}

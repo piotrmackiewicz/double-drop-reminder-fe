@@ -12,6 +12,8 @@ export type Match = {
   thumbs_down: number;
 };
 
+export type MatchWithRating = Match & { percentage: number };
+
 export type DetailedMatch = {
   id: string;
   track_1: SpotifySearchTrack;
@@ -19,6 +21,8 @@ export type DetailedMatch = {
   thumbs_up: number;
   thumbs_down: number;
 };
+
+export type DetailedMatchWithRating = DetailedMatch & { percentage: number };
 
 export type MatchTracksBody = {
   originTrackId: string;
