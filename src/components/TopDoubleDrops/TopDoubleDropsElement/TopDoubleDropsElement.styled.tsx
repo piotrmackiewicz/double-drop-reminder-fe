@@ -4,6 +4,7 @@ export const Container = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+  padding-bottom: 32px;
 `;
 
 export const LeftInfoContainer = styled.div`
